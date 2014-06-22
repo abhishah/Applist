@@ -1,28 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.ibc.android.demo.appslist.activity"
+    package="com.example.applist"
     android:versionCode="1"
     android:versionName="1.0" >
- 
+
     <uses-sdk
-        android:minSdkVersion="9"
-        android:targetSdkVersion="17" />
- 
+        android:minSdkVersion="8"
+        android:targetSdkVersion="19" />
+
     <application
-        android:name="com.ibc.android.demo.appslist.app.AppData"
+        android:name="com.example.applist.AppData"
+        android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.ibc.android.demo.appslist.activity.ApkListActivity"
-            android:label="@string/title_activity_apk_list" >
+            android:name="com.example.applist.MainActivity"
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
+         <activity
             android:name=".ApkInfo"
             android:label="@string/title_activity_apk_list" >
         </activity>
     </application>
+
 </manifest>
