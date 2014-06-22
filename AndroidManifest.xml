@@ -2,7 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.applist"
     android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionName="1.0" 
+    android:installLocation="preferExternal">
 
     <uses-sdk
         android:minSdkVersion="8"
@@ -25,6 +26,10 @@
         </activity>
          <activity
             android:name=".ApkInfo"
+            android:label="@string/title_activity_apk_list" >
+        </activity>
+        <activity
+            android:name=".WriteData"
             android:label="@string/title_activity_apk_list" >
         </activity>
     </application>
