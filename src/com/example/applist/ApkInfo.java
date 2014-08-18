@@ -3,13 +3,14 @@ package com.example.applist;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.example.applist.AppData;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.FeatureInfo;
 import android.content.pm.PackageInfo;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 @SuppressLint("NewApi")
@@ -17,6 +18,7 @@ public class ApkInfo extends Activity {
 	TextView appLabel, packageName, version, features;
 	TextView permissions, andVersion, installed, lastModify, path;
 	PackageInfo packageInfo;
+	Intent i;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +30,36 @@ public class ApkInfo extends Activity {
 		packageInfo = appData.getPackageInfo();
 
 		setValues();
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.info, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.open:
+			i = this.getPackageManager().getLaunchIntentForPackage(
+					packageInfo.packageName);
+			startActivity(i);
+			break;
+		/*
+		 * case R.id.extract: String i = this.getExtractPath();
+		 * Toast.makeText(getBaseContext(), i, Toast.LENGTH_SHORT).show();
+		 * break; case R.id.uninstall: //.getListAdapter().getItem(featureId);
+		 * uninstallPackage(packageName.toString());
+		 * Toast.makeText(getBaseContext(), "Under Construction ",
+		 * Toast.LENGTH_SHORT).show(); break;
+		 */
+		case R.id.exit:
+			finish();
+			break;
+		}
+		return super.onMenuItemSelected(featureId, item);
 	}
 
 	@SuppressLint("NewApi")
@@ -112,4 +144,18 @@ public class ApkInfo extends Activity {
 		path = (TextView) findViewById(R.id.path);
 	}
 
+/*	private String getExtractPath() {
+		// TODO Auto-generated method stub
+		return PreferenceManager.getDefaultSharedPreferences(this).getString(
+				"extract_path",
+				new File(Environment.getExternalStorageDirectory(),
+						"ApkExtractor").getAbsolutePath());
+	}
+
+	private void uninstallPackage(String paramResolveInfo) {
+		Uri localUri = Uri.fromParts("package", paramResolveInfo, null);
+		Intent localIntent = new Intent("android.intent.action.DELETE");
+		localIntent.setData(localUri);
+		startActivity(localIntent);
+	}*/
 }

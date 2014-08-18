@@ -4,18 +4,24 @@
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:showAsAction="never"
-        android:title="@string/action_settings"/>
+        android:title="Extract Path"/>
     <item
         android:id="@+id/genfile"
         android:orderInCategory="200"
         android:showAsAction="always"
-        android:title="generate text file">
+        android:title="text file">
     </item>
     <item
         android:id="@+id/genapk"
         android:orderInCategory="200"
         android:showAsAction="always"
         android:title="extract">
+    </item>
+    <item
+        android:id="@+id/exit1"
+        android:orderInCategory="200"
+        android:showAsAction="always"
+        android:icon="@drawable/exit">
     </item>
 
 </menu>
