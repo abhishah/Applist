@@ -42,7 +42,7 @@ public class WriteData extends Activity {
 					try {
 						File myFile = new File(Environment
 								.getExternalStorageDirectory().toString()
-								+ "/Myapps.txt");
+								+ "/Myapps");
 						if (!myFile.exists())
 							myFile.mkdirs();
 						myFile = new File(myFile.getPath() + "/"
