@@ -7,7 +7,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +17,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
 public class ApkAdapter extends BaseExpandableListAdapter {
-    List<PackageInfo> packageList;
+	List<PackageInfo> packageList;
 	Activity context;
 	PackageManager packagemanager;
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -153,7 +155,11 @@ public class ApkAdapter extends BaseExpandableListAdapter {
 				.getApplicationIcon(packageInfo.applicationInfo);
 		String appName = packagemanager.getApplicationLabel(
 				packageInfo.applicationInfo).toString();
-		appIcon.setBounds(0, 0, 150, 150);
+		Resources r = context.getResources();
+		float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 55,
+				r.getDisplayMetrics());
+		int pix = (int) px;
+		appIcon.setBounds(0, 0, pix, pix);
 		holder.apkname.setCompoundDrawables(appIcon, null, null, null);
 		holder.apkname.setCompoundDrawablePadding(15);
 		holder.apkname.setText(appName);

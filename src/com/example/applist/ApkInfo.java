@@ -4,10 +4,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.FeatureInfo;
 import android.content.pm.PackageInfo;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,6 +28,8 @@ public class ApkInfo extends Activity {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.appinfo);
+		ActionBar bar=getActionBar();
+		bar.setBackgroundDrawable(new ColorDrawable(Color.BLACK));
 		findViewById();
 		AppData appData = (AppData) getApplicationContext();
 		packageInfo = appData.getPackageInfo();

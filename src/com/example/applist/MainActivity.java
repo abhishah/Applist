@@ -8,8 +8,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
+import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.app.ExpandableListActivity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -18,6 +22,8 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.ResolveInfo;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -29,21 +35,28 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
+import android.widget.ExpandableListView.OnGroupExpandListener;
 import android.widget.Toast;
 
+@SuppressLint("NewApi")
 public class MainActivity extends ExpandableListActivity implements
-/* OnItemClickListener, */OnChildClickListener {
+/* OnItemClickListener, */OnChildClickListener, OnGroupExpandListener {
 	static PackageManager packagemanager;
 	ExpandableListView apkList;
 	List<PackageInfo> packageList;
 	List<PackageInfo> packageList1;
 	String path = Environment.getExternalStorageDirectory().toString()
 			+ "/MyApps";
+	ApkAdapter a;
+	private static int expand = -1;
 
+	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		ActionBar bar = getActionBar();
+		bar.setBackgroundDrawable(new ColorDrawable(Color.BLACK));
 		packagemanager = getPackageManager();
 		packageList = packagemanager
 				.getInstalledPackages(PackageManager.GET_PERMISSIONS);
@@ -54,11 +67,13 @@ public class MainActivity extends ExpandableListActivity implements
 				packageList1.add(pi);
 			}
 		}
-		ApkAdapter a = new ApkAdapter(this, packageList1, packagemanager);
+		sort(packageList1);
+		a = new ApkAdapter(this, packageList1, packagemanager);
 		apkList = (ExpandableListView) findViewById(android.R.id.list);
 		apkList.setAdapter(a);
 		// apkList.setOnItemClickListener(this);
 		apkList.setOnChildClickListener(this);
+		apkList.setOnGroupExpandListener(this);
 		// registerForContextMenu(apkList);
 		// setAdapter(a);
 	}
@@ -69,17 +84,6 @@ public class MainActivity extends ExpandableListActivity implements
 				: false;
 
 	}
-
-	// @Override
-	/*
-	 * public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long
-	 * arg3) { // TODO Auto-generated method stub PackageInfo packageinfo =
-	 * (PackageInfo) arg0.getItemAtPosition(arg2); AppData appdata = (AppData)
-	 * getApplicationContext(); appdata.setPackageInfo(packageinfo);
-	 * 
-	 * Intent appInfo = new Intent(getApplicationContext(), ApkInfo.class);
-	 * startActivity(appInfo); }
-	 */
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -109,6 +113,16 @@ public class MainActivity extends ExpandableListActivity implements
 		}
 
 		return super.onMenuItemSelected(featureId, item);
+	}
+
+	@Override
+	public void onGroupExpand(int groupPosition) {
+		// TODO Auto-generated method stub
+		if (expand != -1) {
+			apkList.collapseGroup(expand);
+		}
+		expand = groupPosition;
+		super.onGroupExpand(groupPosition);
 	}
 
 	public class Gen extends AsyncTask<String, Integer, String> {
@@ -158,7 +172,7 @@ public class MainActivity extends ExpandableListActivity implements
 									f2 = new File(Environment
 											.getExternalStorageDirectory()
 											.toString()
-											+ "/MyApps");
+											+ "/My All Apps");
 								} else {
 									f2 = getCacheDir();
 								}
@@ -177,8 +191,9 @@ public class MainActivity extends ExpandableListActivity implements
 								}
 								in.close();
 								out.close();
-								System.out.println("File Copied");
-
+								System.out
+										.println("BackUp of all the Apk is made");
+								dialog.dismiss();
 							} catch (FileNotFoundException ex) {
 								System.out.println(ex.getMessage()
 										+ " in the specified directory.");
@@ -206,23 +221,11 @@ public class MainActivity extends ExpandableListActivity implements
 
 	}
 
-	/*
-	 * private String getExtractPath() { // TODO Auto-generated method stub
-	 * return PreferenceManager.getDefaultSharedPreferences(this).getString(
-	 * "extract_path", new File(Environment.getExternalStorageDirectory(),
-	 * "ApkExtractor").getAbsolutePath()); }
-	 */
-
 	@Override
 	public boolean onChildClick(ExpandableListView parent, View v,
 			int groupPosition, int childPosition, long id) {
 		// TODO Auto-generated method stub
-		// Toast.makeText(getBaseContext(), "reached onclick",
-		// Toast.LENGTH_SHORT)
-		// .show();
-		// ExpandableListAdapter adap = getExpandableListAdapter();
-		// Object pac = adap.getChild(groupPosition, childPosition);
-		// String s = (String) pac;
+
 		String menu = ApkAdapter.a.get(childPosition);
 		if (menu.equals("Extract")) {
 			PackageInfo p = packageList1.get(groupPosition);
@@ -232,8 +235,6 @@ public class MainActivity extends ExpandableListActivity implements
 		}
 		if (menu.equals("AppInfo")) {
 			PackageInfo p = packageList1.get(groupPosition);
-			// PackageInfo packageinfo = (PackageInfo)
-			// arg0.getItemAtPosition(arg2);
 			AppData appdata = (AppData) getApplicationContext();
 			appdata.setPackageInfo(p);
 
@@ -258,48 +259,22 @@ public class MainActivity extends ExpandableListActivity implements
 		return false;
 	}
 
-	/*
-	 * @Override public void onCreateContextMenu(ContextMenu menu, View v,
-	 * ContextMenuInfo menuInfo) { super.onCreateContextMenu(menu, v, menuInfo);
-	 * MenuInflater mi = getMenuInflater(); mi.inflate(R.menu.context, menu); }
-	 * 
-	 * @Override public boolean onContextItemSelected(MenuItem item) { // TODO
-	 * Auto-generated method stub AdapterView.AdapterContextMenuInfo Info =
-	 * (AdapterView.AdapterContextMenuInfo) item .getMenuInfo();
-	 * Toast.makeText(getBaseContext(), "" + Info.position, Toast.LENGTH_SHORT)
-	 * .show(); PackageInfo localResolveInfo = (PackageInfo)
-	 * (getExpandableListAdapter()) .getGroup(Info.position);
-	 * Toast.makeText(getBaseContext(), "PackageInfo", Toast.LENGTH_SHORT)
-	 * .show(); switch (item.getItemId()) { case R.id.appinfo: // ResolveInfo //
-	 * i
-	 * =(ResolveInfo)getListAdapter().getItem(localAdapterContextMenuInfo.position
-	 * );
-	 * 
-	 * extractapk(localResolveInfo); //
-	 * showInstalledAppDetails(localResolveInfo); break; case R.id.uninstall: //
-	 * uninstallPackage(localResolveInfo); break; case R.id.open: //
-	 * openApp(localResolveInfo); break; } return
-	 * super.onContextItemSelected(item);
-	 * 
-	 * }
-	 */
-
-	/*
-	 * private void openApp(ResolveInfo localResolveInfo) { // TODO
-	 * Auto-generated method stub String pack =
-	 * localResolveInfo.activityInfo.name; Intent local = new
-	 * Intent("android.intent.action.MAIN");
-	 * local.setClassName(localResolveInfo.activityInfo.packageName, pack);
-	 * startActivity(local); }
-	 */
-
-	/*
-	 * private void uninstallPackage(ResolveInfo paramResolveInfo) { Uri
-	 * localUri = Uri.fromParts("package",
-	 * paramResolveInfo.activityInfo.packageName, null); Intent localIntent =
-	 * new Intent("android.intent.action.DELETE");
-	 * localIntent.setData(localUri); startActivity(localIntent); }
-	 */
+	private void sort(List<PackageInfo> list) {
+		if (list.size() > 0) {
+			Collections.sort(list, new Comparator<PackageInfo>() {
+				@Override
+				public int compare(final PackageInfo object1,
+						final PackageInfo object2) {
+					return packagemanager
+							.getApplicationLabel(object1.applicationInfo)
+							.toString()
+							.compareTo(
+									packagemanager.getApplicationLabel(
+											object2.applicationInfo).toString());
+				}
+			});
+		}
+	}
 
 	@SuppressWarnings("unused")
 	private void showInstalledAppDetails(ResolveInfo paramResolveInfo) {
@@ -333,7 +308,7 @@ public class MainActivity extends ExpandableListActivity implements
 			String info = Environment.getExternalStorageState();
 			if (info.equals(Environment.MEDIA_MOUNTED)) {
 				f2 = new File(Environment.getExternalStorageDirectory()
-						.toString() + "/MyApp");
+						.toString() + "/My App");
 			} else {
 				f2 = getCacheDir();
 			}

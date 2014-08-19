@@ -9,13 +9,13 @@
         android:id="@+id/genfile"
         android:orderInCategory="200"
         android:showAsAction="always"
-        android:title="text file">
+        android:icon="@drawable/file">
     </item>
     <item
         android:id="@+id/genapk"
         android:orderInCategory="200"
         android:showAsAction="always"
-        android:title="extract">
+        android:icon="@drawable/apk">
     </item>
     <item
         android:id="@+id/exit1"
